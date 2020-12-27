@@ -19,8 +19,8 @@ dist2coast <- function(lons,
   
   # make sf features for points and coastline
   points <- data.frame(lons, lats) %>%
-    st_as_sf(coords = c("lons", "lats")) %>%
-    st_set_crs(4326)
+    st_as_sf(coords = c("lons", "lats"), crs = 4326) # %>%
+#    st_set_crs(4326)
   
   switch(coastline,
          "ne" = coast <- rnaturalearth::ne_coastline(scale = 110, returnclass = "sf") %>% st_set_crs(4326),
