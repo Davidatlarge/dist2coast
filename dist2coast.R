@@ -39,7 +39,7 @@ dist2coast <- function(lons,
            st_set_crs(4326) %>%
            st_combine() %>%
            st_cast("MULTILINESTRING"),
-         "gshhg" = coast <- st_read("worldCoastlines/wcl_fine_GSHHS.gpkg") # already st_combine()ed
+         "gshhg" = coast <- st_read("worldCoastlines/wcl_fine_GSHHS.gpkg", quiet = TRUE) # already st_combine()ed
   )
   
   # crop coastline
@@ -51,7 +51,7 @@ dist2coast <- function(lons,
   # }
   if(coastline_crop){
     bbox <- st_bbox(points)
-    extended_bbox <- bbox + c(-60, -40, 60, 40)
+    extended_bbox <- bbox + c(-40, -20, 40, 20)
     
     coast <- st_crop(coast, extended_bbox)
   }
