@@ -8,14 +8,19 @@ distance of geo points to the nearest coastline. It is meant to be used
 for marine data. In fact it calculates the distance to the nearest line.
 When using the `coastline = "mapdata"` method, for points on land the
 result may well be the distance to a national border that is not the
-coastline\! The method `coastline = "ne"` uses lines representing only
+coastline! The method `coastline = "ne"` uses lines representing only
 the coastline, but with much lower resolution.
 
 The input (and the coastline) will be regarded as WGS84. This can be
-reprojected to the planar UTM 32 references system by choosing `as_UTM32
-= TRUE`, which will make the processing faster, especially when global
-coastline is not filtered via `coastline_crop`, but it is only
-recommended for smaller spatial extend, or for a quick overview.
+reprojected to the planar UTM 32 references system by choosing
+`as_UTM32 = TRUE`, which will make the processing faster, especially
+when global coastline is not filtered via `coastline_crop`, but it is
+only recommended for smaller spatial extend, or for a quick overview.
+
+EDIT: After updates to the sf package, “[the earth is no longer
+flat](https://r-spatial.org/r/2020/06/17/s2.html)”. This creates
+problems with the use of `coastline = "mapdata"`. As a workaround use
+`spherical = FALSE` to turn off S2 processing.
 
 The result is either a vector of distances (in m) corresponding to the
 input coordinates (default) or a matrix of distances between each point
@@ -32,7 +37,7 @@ NOTE: requires packages `mapdata` (for `coastline = "mapdata"`) and
 
 *lats* – vector of latitudes
 
-*coastline\_crop = NULL* – numeric vector with xmin, ymin, xmax and ymax
+*coastline_crop = NULL* – numeric vector with xmin, ymin, xmax and ymax
 for cropping the coastline to a bounding box, e.g. c(xmin = -1, ymin =
 50, xmax = 11, ymax = 60), elements do not have to be named but must be
 in the correct order
@@ -41,8 +46,12 @@ in the correct order
 (www.naturalearthdata.com) (faster), “mapdata” for using `map('world')`
 (more precise)
 
-*as\_utm32 = FALSE* – transform both points and coast to UTM32, i.e. a
+*as_utm32 = FALSE* – transform both points and coast to UTM32, i.e. a
 planar projection, for more speed
+
+*spherical = FALSE* – the default turns off S2 processing in the sf
+package, the previous system state is saved and restored when the
+function is run.
 
 *output = “mindist”* – “mindist” for distance to nearest coastline,
 “distmat” for matrix of distances between points (in rows) and every

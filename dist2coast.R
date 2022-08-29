@@ -9,6 +9,7 @@ dist2coast <- function(lons,
                        coastline_crop = NULL, #  numeric vector with xmin, ymin, xmax and ymax for cropping the coastline to a bounding box, e.g. c(xmin = -1, ymin = 50, xmax = 11, ymax = 60), elements do not have to be named but must be in the correct order
                        coastline = "ne", # coastline source; "ne" for Natural Earth (www.naturalearthdata.com) (faster), "mapdata" for using map('world') (more precise)
                        as_utm32 = FALSE, # transform both points and coast to UTM32, i.e. a planar projection, for more speed
+                       spherical = FALSE, # operations using coastline = "mapdata" may fail if spherical (S2) processing is used
                        output = "mindist", # "mindist" for distance to nearest coastline, "distmat" for matrix of distances between points (in rows) and every line (in cols)
                        plot = FALSE
                        
@@ -16,6 +17,9 @@ dist2coast <- function(lons,
   suppressWarnings( suppressPackageStartupMessages(library(dplyr, quietly = TRUE)) )
   suppressWarnings( suppressPackageStartupMessages(library(mapdata, quietly = TRUE)) ) 
   suppressWarnings( suppressPackageStartupMessages(library(sf, quietly = TRUE)) )
+  
+  old_sf_use_s2 <- sf::sf_use_s2() # save setting to restore it at the end
+  suppressMessages( sf::sf_use_s2(spherical) ) # several operations do not work with S2 processing
   
   # make sf features for points and coastline
   points <- data.frame(lons, lats) %>%
@@ -60,6 +64,8 @@ dist2coast <- function(lons,
       theme_bw()
     print(p1)
   }
+  
+  suppressMessages( sf::sf_use_s2(old_sf_use_s2) ) # restore setting
   
   return(out)
 }
